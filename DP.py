@@ -1,15 +1,14 @@
 # A collection of python implementation for Dynamic Programming problems
-
+# -*- coding: utf-8 -*- 
 import numpy as np
 
-"""
-Maximum Value Contiguous Subsequence. Given a sequence 
-of n real numbers A(1) ... A(n), determine a contiguous 
-subsequence A(i) ... A(j) for which the sum of 
-elements in the subsequence is maximized.
-"""
-
 def maximum_subseq(A):
+	"""
+	Maximum Value Contiguous Subsequence. Given a sequence 
+	of n real numbers A(1) ... A(n), determine a contiguous 
+	subsequence A(i) ... A(j) for which the sum of 
+	elements in the subsequence is maximized.
+	"""
 
 	max_here, max_total = A[0], A[0]
 	totalBgnIdx, totalEndIdx = -1, -1
@@ -32,14 +31,14 @@ def maximum_subseq(A):
 #print maximum_subseq([13, -3, -25, 20, -3, -16, -23, 18, 20, 
 #	-7, 12, -5, -22, 15, -4, 7])
 
-"""
-Longest Increasing Subsequence. Given a sequence of n real
-numbers A(1) ... A(n), determine a subsequence (not 
-necessarily contiguous) of maximum length in which the 
-values in the subsequence form a strictly increasing sequence.
-"""
 
 def longest_increasing_seq(A):
+	"""
+	Longest Increasing Subsequence. Given a sequence of n real
+	numbers A(1) ... A(n), determine a subsequence (not 
+	necessarily contiguous) of maximum length in which the 
+	values in the subsequence form a strictly increasing sequence.
+	"""
 
 	D, T = [1] * len(A), [-1] * len(A)
 	maxLen, maxIdx = 1, -1
@@ -55,6 +54,9 @@ def longest_increasing_seq(A):
 	return maxLen, [A[i] for i in l]
 
 def get_idx(i, T, l):
+	"""
+	Helper function for LIS backtrace.
+	"""
 	if T[i] == -1:
 		l = [i] + l
 		return l
@@ -67,31 +69,114 @@ def get_idx(i, T, l):
 # print longest_increasing_seq([13, -3, -25, 20, -3, -16, -23, 18, 20, 
 # 	-7, 12, -5, -22, 15, -4, 7])
 
-"""
-You are given n types of coin denominations of values 
-v(1) < v(2) < ... < v(n) (all integers). Assume v(1) = 1, 
-so you can always make change for any amount of money C. 
-Give an algorithm which makes change for an amount 
-of money C with as few coins as possible.
-"""
 
 def make_change(v, c):
-
+	"""
+	You are given n types of coin denominations of values 
+	v(1) < v(2) < ... < v(n) (all integers). Assume v(1) = 1, 
+	so you can always make change for any amount of money C. 
+	Give an algorithm which makes change for an amount 
+	of money C with as few coins as possible.
+	"""
 
 
 	pass
 
 
 def longest_common_seq(s1, s2):
+	"""
+	The longest common subsequence (LCS) problem is the problem of 
+	finding the longest subsequence common to all sequences in a 
+	set of sequences (often just two sequences).
+	"""
+	m, n = len(s1), len(s2)
+	w = np.zeros((m + 1, n + 1), dtype='int')
+	common_subseq = ''
 
-	pass
+	for i in range(1, m + 1):
+		for j in range(1, n + 1):
+			if s1[i - 1] == s2[j - 1]:
+				w[i][j] = 1 + w[i][j - 1]
+			else:
+				w[i][j] = max(w[i - 1][j], w[i][j - 1])
 	
-def edit_distance(s1, s2):
+	# for backtrace
+	while m > 0 and n > 0:
 
-	pass
+		if s1[m - 1] == s2[n - 1]:
+			common_subseq = s1[m - 1] + common_subseq
+			m -= 1
+			n -= 1
+		else:
+			if w[m - 1][n] > w[m][n - 1]:
+				m -= 1
+			else:
+				n -= 1
+
+	return w[-1][-1], common_subseq
+
+# print longest_common_seq('empty', 'pity')
+# print longest_common_seq('s','d')
+# print longest_common_seq('bcade', 'cebd')
+# print longest_common_seq('nematode knowledge', 'empty bottle')
+
+def edit_distance(s1, s2):
+	"""
+	Given two strings a and b on an alphabet Σ (e.g. the set of 
+	ASCII characters, the set of bytes [0..255], etc.), the edit 
+	distance d(a, b) is the minimum-weight series of edit operations 
+	that transforms a into b. One of the simplest sets of edit 
+	operations is:
+	1. Insertion of a single symbol. If a = uv, then inserting the 
+	symbol x produces uxv. This can also be denoted ε→x, using ε 
+	to denote the empty string.
+	2. Deletion of a single symbol changes uxv to uv (x→ε).
+	3. Substitution of a single symbol x for a symbol y ≠ x 
+	changes uxv to uyv (x→y).
+	"""
+	m, n = len(s1), len(s2)
+	w = np.ones((m + 1, n + 1), dtype='int')
+	
+
+	trace = np.array((m + 1, n + 1),(0,0), dtype='int,int')
+	print trace
+	# initialize the matrix
+	for i in range(1, m + 1):
+		w[i][0] = i
+	for j in range(1, n + 1):
+		w[0][j] = j
+
+	# start iteration
+	for i in range(1, m + 1):
+		for j in range(1, n + 1):
+			if s1[i - 1] == s2[j - 1]:
+				dist = w[i - 1][j - 1]
+			else: 
+				dist = w[i - 1][j - 1] + 2
+			w[i][j] = min(w[i - 1][j] + 1, w[i][j - 1] + 1, dist)
+			# for backtrace
+			if w[i][j] == w[i - 1][j] + 1:
+				trace[i][j] = tuple((i - 1, j))
+			elif w[i][j] == w[i][j - 1] + 1:
+				trace[i][j] = tuple((i, j - 1))
+			else:
+				trace[i][j] = tuple((i - 1, j - 1))
+	
+	print trace.T	
+
+	return w[-1][-1]
+
+print edit_distance('empt', 'my p')
 
 def minimal_palindrome(p):
-
+	"""
+	Given a string, a partitioning of the string is a palindrome 
+	partitioning if every substring of the partition is a palindrome. 
+	For example, “aba|b|bbabb|a|b|aba” is a palindrome partitioning of 
+	“ababbbabbababa”. Determine the fewest cuts needed for palindrome 
+	partitioning of a given string. For example, minimum 3 cuts are needed 
+	for “ababbbabbababa”. The three cuts are “a|babbbab|b|ababa”. 
+	"""
 	n = len(p)
 	w = np.ones((n, n), dtype='int')
 	div = []
@@ -112,6 +197,10 @@ def minimal_palindrome(p):
 
 
 def track_palindrome(i, I, W, P):
+	"""
+	A helper recursive function to back trace the partitioned 
+	palindromes that construct the given string.
+	"""
 	if W[i] == 1:
 		return [P[i[0]:i[1]+1]]
 	else:
@@ -123,7 +212,9 @@ def track_palindrome(i, I, W, P):
 				return l + r
 
 def isPalindrome(s):
-
+	"""
+	A simple function to check whether given string is a palindrome.
+	"""
 	if len(s) < 2:
 		return True
 	else:
@@ -137,5 +228,20 @@ def isPalindrome(s):
 # print minimal_palindrome('ababbbabbababa') #4
 # print minimal_palindrome('axffde')	#5
 # print minimal_palindrome('oxxo')	#1
+# print minimal_palindrome('x') #1
+
+def longest_palindromic_subsequence(s):
+	"""
+	Given a sequence, find the length of the longest palindromic subsequence 
+	in it. For example, if the given sequence is “BBABCBCAB”, then the output 
+	should be 7 as “BABCBAB” is the longest palindromic subseuqnce in it. 
+	“BBBBB” and “BBCBB” are also palindromic subsequences of the given sequence, 
+	but not the longest ones.
+	"""
+
+	pass
+
+
+
 
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 The prototypical backtracking problem is the classical n Queens Problem, 
 first proposed by German chess enthusiast Max Bezzel in 1848 for the 
@@ -62,4 +63,70 @@ def subset_sum(S, x):
 # print subset_sum([2,3], 5)
 # print subset_sum([-2, 4, 8, -1, -3], -3)
 # print subset_sum([42,2,3,1,-16,25,20,-13,8,18,6,9,4,7,-11,10,15,5,-9], 29)
+
+def longest_accelerating_subsequence(prev, back, S):
+	"""
+	Call a sequence S accelerating if 2*S[i] < S[i−1] + S[i+1] for all i
+	"""
+	print S, prev, back
+	if len(S) < 3:
+		return 0
+	else:
+		curr = longest_accelerating_subsequence(prev, back, S[1:])
+
+		if 2 * S[1] < prev + back:
+			l = 2 + longest_accelerating_subsequence(S[0], S[2], S[1:])
+
+			if l > curr:
+				curr = l
+		return curr
+
+print longest_accelerating_subsequence(10000, 10000, [2, 4, 8, 19, 37])
+
+
+def recursive_longest_common_subsequence(s1, s2, cs):
+	"""
+	Very very inefficient recursive algorithm for LCS problem.
+	"""
+	if len(s1) == 0 or len(s2) == 0:
+		return 0, cs
+
+	else:
+		if s1[0] == s2[0]:
+			res = recursive_longest_common_subsequence(s1[1:], s2[1:], cs)
+			newLen = res[0] + 1
+			newStr = s1[0] + res[1]
+			return newLen, newStr
+		else:
+			res1 = recursive_longest_common_subsequence(s1, s2[1:], cs)
+			res2 = recursive_longest_common_subsequence(s1[1:], s2, cs)
+			if res1[0] > res2[0]:
+				return res1
+			else:
+				return res2
+
+#print recursive_longest_common_subsequence('nematode knowledge', 'empty bottle', '')
+
+def recursive_permutation(s):
+	"""
+	A recursive algorithm to generate all permutations of given string s.
+	"""
+	n = len(s)
+	if n < 2:
+		return set(s)
+	else:
+		S = set()
+		for i in range(n):
+			pivot = s[i]
+			rest = s[:i] + s[i + 1:n]
+			for p in recursive_permutation(rest):
+				S.add(pivot + p)
+		return S
+
+#print recursive_permutation('abcd. Lol')
+
+
+
+
+
 
