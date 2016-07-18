@@ -125,8 +125,16 @@ def recursive_permutation(s):
 
 #print recursive_permutation('abcd. Lol')
 
+def recursive_longest_palindromic_subsequence(s):
+	if len(s) < 2:
+		return 1
+	else:
+		if s[0] == s[-1]:
+			return recursive_longest_palindromic_subsequence(s[1:-1]) + 2
+		else:
+			return max(recursive_longest_palindromic_subsequence(s[:-2]), 
+				recursive_longest_palindromic_subsequence(s[1:]))
 
-
-
+#print recursive_longest_palindromic_subsequence('bbabcbcab')
 
 
