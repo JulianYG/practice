@@ -135,11 +135,14 @@ def edit_distance(s1, s2):
 	changes uxv to uyv (x→y).
 	"""
 	m, n = len(s1), len(s2)
-	w = np.ones((m + 1, n + 1), dtype='int')
-	
+	w = np.zeros((m + 1, n + 1), dtype='int')
+	trace = []
+	for i in range(m + 1):
+		trace.append([])
+		for j in range(n + 1):
+			trace[i].append((0, 0))
+	trace[0][0] = (-1, -1)
 
-	trace = np.array((m + 1, n + 1),(0,0), dtype='int,int')
-	print trace
 	# initialize the matrix
 	for i in range(1, m + 1):
 		w[i][0] = i
@@ -152,7 +155,7 @@ def edit_distance(s1, s2):
 			if s1[i - 1] == s2[j - 1]:
 				dist = w[i - 1][j - 1]
 			else: 
-				dist = w[i - 1][j - 1] + 2
+				dist = w[i - 1][j - 1] + 1
 			w[i][j] = min(w[i - 1][j] + 1, w[i][j - 1] + 1, dist)
 			# for backtrace
 			if w[i][j] == w[i - 1][j] + 1:
@@ -161,12 +164,35 @@ def edit_distance(s1, s2):
 				trace[i][j] = tuple((i, j - 1))
 			else:
 				trace[i][j] = tuple((i - 1, j - 1))
+
+	trace_idx = (m, n)
+	modification = []
+	trace_lst = [trace_idx]
+	while trace[trace_idx[0]][trace_idx[1]] != (-1, -1):
+		trace_lst.append(trace[trace_idx[0]][trace_idx[1]])
+		trace_idx = trace[trace_idx[0]][trace_idx[1]]
+	trace_lst.reverse()
 	
-	print trace.T	
+	for curr in range(len(trace_lst) - 1):
+		currIdx = trace_lst[curr]
+		nextIdx = trace_lst[curr + 1]
+		if nextIdx[0] > currIdx[0]:
+			if nextIdx[1] > currIdx[1]:
+				if s1[nextIdx[0] - 1] != s2[nextIdx[1] - 1]:
+					modification.append('Substitute \'' + s1[nextIdx[0] - 1] + \
+	 				'\' with \'' + s2[nextIdx[1] - 1] + '\'')
+				else:
+					modification.append('Equal: \'' + s1[nextIdx[0] - 1] + '\' , ' + s2[nextIdx[1] - 1] + '\'')
+			else:
+				modification.append('Delete \'' + s1[nextIdx[0] - 1] + '\'')
+		elif nextIdx[1] > currIdx[1]:
+			modification.append('Insert \'' + s2[nextIdx[1] - 1] + '\'')
 
-	return w[-1][-1]
+	return w[-1][-1], modification
 
-print edit_distance('empt', 'my p')
+# print edit_distance('intention', 'execution')
+# print edit_distance('ab', 'ba')
+# print edit_distance('empt', 'my p')
 
 def minimal_palindrome(p):
 	"""
