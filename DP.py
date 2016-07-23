@@ -78,7 +78,7 @@ def make_change(v, c):
 	Give an algorithm which makes change for an amount 
 	of money C with as few coins as possible.
 	"""
-
+	
 
 	pass
 
@@ -224,8 +224,8 @@ def minimal_palindrome(p):
 
 def track_palindrome(i, I, W, P):
 	"""
-	A helper recursive function to back trace the partitioned 
-	palindromes that construct the given string.
+	A helper recursive fcunction to back trace the partitioned 
+	palindromes that onstruct the given string.
 	"""
 	if W[i] == 1:
 		return [P[i[0]:i[1]+1]]
@@ -264,10 +264,58 @@ def longest_palindromic_subsequence(s):
 	“BBBBB” and “BBCBB” are also palindromic subsequences of the given sequence, 
 	but not the longest ones.
 	"""
+	n = len(s)
+	w = np.ones((n, n), dtype='int')
 
-	
+	for sublen in range(1, n + 1):
+		for bgnIdx in range(n - sublen):
+			endIdx = bgnIdx + sublen 
+			if s[bgnIdx] == s[endIdx]:
+				if sublen == 1:
+					w[bgnIdx][endIdx] = 2
+				else:
+					w[bgnIdx][endIdx] = w[bgnIdx + 1][endIdx - 1] + 2
+			else:
+				w[bgnIdx][endIdx] = max(w[bgnIdx][endIdx - 1], w[bgnIdx + 1][endIdx])
+
+	return w[0][-1]
+
+# print longest_palindromic_subsequence('bbabcbcab')
 
 
+def minimum_palindromic_insertions(s):
+	"""
+	Given a string, find the minimum number of characters to be inserted 
+	to convert it to palindrome. 
+	Returns the minimum number of characters and the modified string of palindrome.
+	"""
+	# base case
+	if len(s) < 2:
+		return 0, s
+	# if begin and end as palindrome, only need to check the rest
+	if s[0] == s[-1]:
+		minLen, palStr = minimum_palindromic_insertions(s[1:-1])
+		return minLen, s[0] + palStr + s[0]
+	else:
+		restLeft = s[1:]
+		minLenLeft, palStrLeft = minimum_palindromic_insertions(restLeft)
+		if s[0] != restLeft[-1]:
+			minLenLeft += 1
+			palStrLeft = s[0] + palStrLeft + s[0]
+		# try both left and right ends, and pick the best
+		revS = s[::-1]
+		restRight = revS[1:]
+		minLenRight, palStrRight = minimum_palindromic_insertions(restRight)
+		if revS[0] != restRight[-1]:
+			minLenRight += 1
+			palStrRight = (revS[0] + palStrRight + revS[0])[::-1]
+		if minLenLeft < minLenRight:
+			return minLenLeft, palStrLeft
+		else:
+			return minLenRight, palStrRight
 
+# print minimum_palindromic_insertions('bboocb')
 
+def matrix_chain_order(d):
+	pass
 
