@@ -138,3 +138,37 @@ def recursive_longest_palindromic_subsequence(s):
 #print recursive_longest_palindromic_subsequence('bbabcbcab')
 
 
+def minimum_palindromic_insertions(s):
+	"""
+	Given a string, find the minimum number of characters to be inserted 
+	to convert it to palindrome. 
+	Returns the minimum number of characters and the modified string of palindrome.
+	"""
+	# base case
+	if len(s) < 2:
+		return 0, s
+	# if begin and end as palindrome, only need to check the rest
+	if s[0] == s[-1]:
+		minLen, palStr = minimum_palindromic_insertions(s[1:-1])
+		return minLen, s[0] + palStr + s[0]
+	else:
+		restLeft = s[1:]
+		minLenLeft, palStrLeft = minimum_palindromic_insertions(restLeft)
+		if s[0] != restLeft[-1]:
+			minLenLeft += 1
+			palStrLeft = s[0] + palStrLeft + s[0]
+		# try both left and right ends, and pick the best
+		revS = s[::-1]
+		restRight = revS[1:]
+		minLenRight, palStrRight = minimum_palindromic_insertions(restRight)
+		if revS[0] != restRight[-1]:
+			minLenRight += 1
+			palStrRight = (revS[0] + palStrRight + revS[0])[::-1]
+		if minLenLeft < minLenRight:
+			return minLenLeft, palStrLeft
+		else:
+			return minLenRight, palStrRight
+
+# print minimum_palindromic_insertions('bboocb')
+
+
