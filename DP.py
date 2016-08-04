@@ -33,7 +33,6 @@ def maximum_subseq(A):
 #print maximum_subseq([13, -3, -25, 20, -3, -16, -23, 18, 20, 
 #	-7, 12, -5, -22, 15, -4, 7])
 
-
 def longest_increasing_seq(A):
 	"""
 	Longest Increasing Subsequence. Given a sequence of n real
@@ -69,7 +68,7 @@ def get_idx(i, T, l):
 # print longest_increasing_seq([-2, -5, 6, -2, 3, -10, 5, -6])
 # print longest_increasing_seq([-3, 1, 2, 4, -6, 5, 7, 2])
 # print longest_increasing_seq([13, -3, -25, 20, -3, -16, -23, 18, 20, 
-# 	-7, 12, -5, -22, 15, -4, 7])
+#	-7, 12, -5, -22, 15, -4, 7])
 
 
 def make_change(v, C):
@@ -321,6 +320,16 @@ def matrix_chain_order(p):
 
 #print matrix_chain_order([40, 20, 30, 10, 30])
 
+def digit2int(d):
+	"""
+	A helper function to combine numbers in a list to decimal int value
+	"""
+	val = 0
+	n = len(d)
+	for i in range(n):
+		val += int(d[i] * math.pow(10, n - i - 1))
+	return val
+
 def longest_increasing_digital_subsequence(D):
 	"""
 	Let D[1..n] be an array of digits, each an integer between 0 and 9. 
@@ -333,40 +342,68 @@ def longest_increasing_digital_subsequence(D):
 	"""
 	A = [0] + D
 	n = len(A)
-	w = np.zeros((n, n), dtype='int')
+	w = np.ones((n, n), dtype='int')
+	# trackback matrix
+	t, num = [], []
+	for i in range(n):
+		t.append([])
+		for j in range(n):
+			t[i].append((0, 0))
+	# Mark as (-1, -1) for iteration base case
+	t[0][0] = (-1, -1)
+
 	# This is basically a upper-triangular matrix
-	for i in range(1, n):
-		w[i, i] = 1
+	w[0, :] = 0
+	w[:, 0] = 0
+
 	# No need to account for the last one
 	for sublen in range(1, n):
-		curr_max = digit2int(A[1:sublen + 1])
-		for end_idx in range(sublen + 1, n):
+		for end_idx in range(sublen, n):
+
 			start_idx = end_idx + 1 - sublen
 			curr_val = digit2int(A[start_idx:end_idx + 1])
-			prev = max(w[:, start_idx - 1])
-			# Only treat it as whole numbers when not sharing digits
-			if end_idx % sublen == 0:	
-				if curr_val > curr_max:
-					curr_max = curr_val
-					w[sublen, end_idx] = prev + 1
-				else:
-					w[sublen, end_idx] = prev
-			# Otherwise, more digits means bigger than less digits
+
+			prev_max = max(w[:sublen, start_idx - 1])
+			prev_max_idx = (np.argmax(w[:sublen, start_idx - 1]), start_idx - 1)
+
+			if end_idx % sublen == 0:
+				for jmp_idx in range(sublen, start_idx, sublen):
+					whole_val = digit2int(A[jmp_idx - sublen + 1: jmp_idx + 1])
+			
+					if curr_val > whole_val and w[sublen, jmp_idx] + 1 > w[sublen, end_idx]:
+						w[sublen, end_idx] = w[sublen, jmp_idx] + 1
+						t[sublen][end_idx] = (sublen, jmp_idx)
+					else:
+						if sublen > 1:
+							w[sublen, end_idx] = prev_max + 1
+							t[sublen][end_idx] = prev_max_idx
 			else:
-				w[sublen, end_idx] = prev + 1
-	return max(w[:, -1])
+				w[sublen, end_idx] = prev_max + 1
+				t[sublen][end_idx] = prev_max_idx
 
-def digit2int(d):
-	"""
-	A helper function to combine numbers in a list to decimal int value
-	"""
-	val = 0
-	n = len(d)
-	for i in range(n):
-		val += int(d[i] * math.pow(10, n - i - 1))
-	return val
+	max_res_idx = (np.argmax(w[:, -1]), n - 1)
+	f = max_res_idx[0]
 
-print longest_increasing_digital_subsequence([3,1,4,2,1])
-print longest_increasing_digital_subsequence([3,1,4,1,5,
- 	9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6])
-print longest_increasing_digital_subsequence([3,1,4,1,5,1,6])
+	while max_res_idx != (-1, -1):
+		sublen = max_res_idx[0]
+		num.append(digit2int(A[max_res_idx[1] - sublen + 1: max_res_idx[1] + 1]))
+		max_res_idx = t[max_res_idx[0]][max_res_idx[1]]
+
+	num.reverse()
+
+	return w[f, n - 1], num[1:]
+
+# print longest_increasing_digital_subsequence([3,1,4,2,1])
+# print longest_increasing_digital_subsequence([3,1,4,1,5,1,6])
+# print longest_increasing_digital_subsequence([4,1,3,6])
+# print longest_increasing_digital_subsequence([4,3,5,1])
+# print longest_increasing_digital_subsequence([3,1,4,1,5,9,2,6,5])
+# print longest_increasing_digital_subsequence([3,1,4,1,5,
+#   	9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6])
+
+
+
+
+
+
+
