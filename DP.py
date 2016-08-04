@@ -1,6 +1,8 @@
 # A collection of python implementation for Dynamic Programming problems
 # -*- coding: utf-8 -*- 
 import numpy as np
+import sys
+import math
 
 def maximum_subseq(A):
 	"""
@@ -233,7 +235,7 @@ def minimal_palindrome(p):
 
 def track_palindrome(i, I, W, P):
 	"""
-	A helper recursive fcunction to back trace the partitioned 
+	A helper recursive function to back trace the partitioned 
 	palindromes that onstruct the given string.
 	"""
 	if W[i] == 1:
@@ -291,6 +293,80 @@ def longest_palindromic_subsequence(s):
 
 # print longest_palindromic_subsequence('bbabcbcab')
 
-def matrix_chain_order(d):
-	
+def matrix_chain_order(p):
+	"""
+	Input: p[] = {40, 20, 30, 10, 30}   
+	Output: 26000  
+	There are 4 matrices of dimensions 40x20, 20x30, 30x10 and 10x30.
+	Let the input 4 matrices be A, B, C and D. The minimum number of 
+	multiplications are obtained by putting parenthesis in following way
+	(A(BC))D --> 20*30*10 + 40*20*10 + 40*10*30
+	"""
+	n = len(p)
+	w = np.zeros((n, n), dtype='int')
+	for i in range(1, n):
+		w[i][i] = 0
 
+	for sublen in range(2, n + 1):
+		for bgnIdx in range(1, n - sublen + 1):
+			endIdx = bgnIdx + sublen - 1
+
+			w[bgnIdx][endIdx] = sys.maxint
+
+			for midIdx in range(bgnIdx, endIdx): 
+				w[bgnIdx][endIdx] = min(w[bgnIdx][endIdx], 
+					w[bgnIdx][midIdx] + w[midIdx+1][endIdx] + p[bgnIdx - 1] * p[midIdx] * p[endIdx])
+	
+	return w[1][-1]
+
+#print matrix_chain_order([40, 20, 30, 10, 30])
+
+def longest_increasing_digital_subsequence(D):
+	"""
+	Let D[1..n] be an array of digits, each an integer between 0 and 9. 
+	A digital subsequence of D is an sequence of positive integers composed in 
+	the usual way from disjoint substrings of D. 
+	For example, 3, 4, 5, 9, 26, 35, 89, 93, 238, 462 is an increasing digital 
+	subsequence with length 10 of the first several digits of π:
+	3 1 4 1 5 9 2 6 5 3 5 8 9 7 9 3 2 3 8 4 6 2 6
+	This function computes the longest increasing digital subsequence of D.
+	"""
+	A = [0] + D
+	n = len(A)
+	w = np.zeros((n, n), dtype='int')
+	# This is basically a upper-triangular matrix
+	for i in range(1, n):
+		w[i, i] = 1
+	# No need to account for the last one
+	for sublen in range(1, n):
+		curr_max = digit2int(A[1:sublen + 1])
+		for end_idx in range(sublen + 1, n):
+			start_idx = end_idx + 1 - sublen
+			curr_val = digit2int(A[start_idx:end_idx + 1])
+			prev = max(w[:, start_idx - 1])
+			# Only treat it as whole numbers when not sharing digits
+			if end_idx % sublen == 0:	
+				if curr_val > curr_max:
+					curr_max = curr_val
+					w[sublen, end_idx] = prev + 1
+				else:
+					w[sublen, end_idx] = prev
+			# Otherwise, more digits means bigger than less digits
+			else:
+				w[sublen, end_idx] = prev + 1
+	return max(w[:, -1])
+
+def digit2int(d):
+	"""
+	A helper function to combine numbers in a list to decimal int value
+	"""
+	val = 0
+	n = len(d)
+	for i in range(n):
+		val += int(d[i] * math.pow(10, n - i - 1))
+	return val
+
+print longest_increasing_digital_subsequence([3,1,4,2,1])
+print longest_increasing_digital_subsequence([3,1,4,1,5,
+ 	9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6])
+print longest_increasing_digital_subsequence([3,1,4,1,5,1,6])
