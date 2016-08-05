@@ -324,11 +324,9 @@ def digit2int(d):
 	"""
 	A helper function to combine numbers in a list to decimal int value
 	"""
-	val = 0
-	n = len(d)
-	for i in range(n):
-		val += int(d[i] * math.pow(10, n - i - 1))
-	return val
+	s = [str(c) for c in d]
+	# To avoid overflow
+	return 0 if not s else int(''.join(s))
 
 def longest_increasing_digital_subsequence(D):
 	"""
@@ -365,21 +363,32 @@ def longest_increasing_digital_subsequence(D):
 
 			prev_max = max(w[:sublen, start_idx - 1])
 			prev_max_idx = (np.argmax(w[:sublen, start_idx - 1]), start_idx - 1)
-
-			if end_idx % sublen == 0:
-				for jmp_idx in range(sublen, start_idx, sublen):
-					whole_val = digit2int(A[jmp_idx - sublen + 1: jmp_idx + 1])
 			
-					if curr_val > whole_val and w[sublen, jmp_idx] + 1 > w[sublen, end_idx]:
-						w[sublen, end_idx] = w[sublen, jmp_idx] + 1
+			for jmp_idx in range(1, start_idx):
+				if jmp_idx - sublen < 0:
+					w[sublen, end_idx] = w[sublen, jmp_idx] + 1
+					t[sublen][end_idx] = (sublen, jmp_idx)
+				whole_val = digit2int(A[jmp_idx - sublen + 1: jmp_idx + 1])
+				# print str(jmp_idx) + '--', curr_val, whole_val, start_idx, end_idx
+
+				if curr_val > whole_val and w[sublen, jmp_idx] + 1 > w[sublen, end_idx]:
+
+					if end_idx % sublen == 0:
+						w[sublen, end_idx] = max(prev_max, w[sublen, jmp_idx]) + 1
 						t[sublen][end_idx] = (sublen, jmp_idx)
+
 					else:
-						if sublen > 1:
-							w[sublen, end_idx] = prev_max + 1
-							t[sublen][end_idx] = prev_max_idx
-			else:
-				w[sublen, end_idx] = prev_max + 1
-				t[sublen][end_idx] = prev_max_idx
+						# print curr_val, whole_val, end_idx, max(prev_max, max(w[sublen, :start_idx])) + 1
+						w[sublen, end_idx] = max(prev_max, max(w[sublen, :start_idx])) + 1
+						# print w[sublen, end_idx]
+						# print '---'
+						t[sublen][end_idx] = (sublen, np.argmax(w[sublen, :start_idx]))
+
+				else:
+					if sublen > 1:
+						w[sublen, end_idx] = prev_max + 1
+						t[sublen][end_idx] = prev_max_idx
+
 
 	max_res_idx = (np.argmax(w[:, -1]), n - 1)
 	f = max_res_idx[0]
@@ -390,19 +399,21 @@ def longest_increasing_digital_subsequence(D):
 		max_res_idx = t[max_res_idx[0]][max_res_idx[1]]
 
 	num.reverse()
-
+	print t
 	return w[f, n - 1], num[1:]
 
+# print longest_increasing_digital_subsequence([1,1,1,2,1])
 # print longest_increasing_digital_subsequence([3,1,4,2,1])
 # print longest_increasing_digital_subsequence([3,1,4,1,5,1,6])
 # print longest_increasing_digital_subsequence([4,1,3,6])
 # print longest_increasing_digital_subsequence([4,3,5,1])
 # print longest_increasing_digital_subsequence([3,1,4,1,5,9,2,6,5])
-# print longest_increasing_digital_subsequence([3,1,4,1,5,
-#   	9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6])
+print longest_increasing_digital_subsequence([3,1,4,1,5,
+  	9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6])
 
-
-
+# l = ['3'] + list('14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230664709384460955058223172535940812848111745028410270193852110555964462294895493038196442881097566593344612847564823378678316527120190914564856692346034861045432664821339360726024914127372458700660631558817488152092096282925409171536436789259036001133053054882046652138414695194151160943305727036575959195309218611738193261179310511854807446237996274956735188575272489122793818301194912983367336244065664308602139494639522473719070217986094370277053921717629317675238467481846766940513200056812714526356082778577134275778960917')
+# l = [3,1,4,1,5,9,2,6,5,3,5,8,9,7,9,3,2,3,8,4,6,2,6,4,3,3,8,3,2,7,9,5,2,8,8,4,1,9]
+# print longest_increasing_digital_subsequence([int(i) for i in l])
 
 
 
