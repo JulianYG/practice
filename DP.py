@@ -462,4 +462,23 @@ def building_bridge(south, north):
 	only connect city i on the northern bank to city i on the southern bank.
 	"""
 
+	D = np.zeros((len(south) + 1, len(north) + 1), dtype='int')
+	for i in range(1, len(south) + 1):
+		for j in range(1, len(north) + 1):
+			if south[i - 1] == north[j - 1]:
+				D[i, j] = D[i - 1, j - 1] + 1
+			else:
+				if south[i - 1] > north[j - 1]:
+					D[i, j] = max(D[i - 1, j - 1], D[i - 1, j])
+				else:
+					D[i, j] = max(D[i - 1, j - 1], D[i, j - 1])
+	return D[-1, -1]
+
+# print building_bridge([1,2,3], [2,1,3])
+# print building_bridge([1,2], [1,2])
+# print building_bridge([1,3,6,2,4,5], [5,1,2,6,4,3])
+# print building_bridge([1,2,3,4,5,6,7], [7,6,5,4,3,2,1])
+# print building_bridge([1,2,3,4,5,6,7], [1,6,2,3,4,5,7])
+
+
 
