@@ -480,5 +480,33 @@ def building_bridge(south, north):
 # print building_bridge([1,2,3,4,5,6,7], [7,6,5,4,3,2,1])
 # print building_bridge([1,2,3,4,5,6,7], [1,6,2,3,4,5,7])
 
+def integer_knapsack_without_duplicates():
 
+	pass
+
+def balanced_partition(S):
+	"""
+	You have a set of n integers each in the range 0 ... K. Partition 
+	these integers into two subsets such that you minimize |S1 - S2|, 
+	where S1 and S2 denote the sums of the elements in each of the two subsets.
+	"""
+	
+
+def counting_boolean_parenthesizations(BS):
+	"""
+	You are given a boolean expression consisting of a string of the 
+	symbols 'true', 'false', 'and', 'or', and 'xor'. Count the number of ways 
+	to parenthesize the expression such that it will evaluate to true. 
+	For example, there are 2 ways to parenthesize 'true and false xor true' 
+	such that it evaluates to true.
+	"""
+
+def optimal_strategy(v):
+	"""
+	Consider a row of n coins of values v(1) ... v(n), where n is even. 
+	We play a game against an opponent by alternating turns. In each turn, 
+	a player selects either the first or last coin from the row, removes it 
+	from the row permanently, and receives the value of the coin. Determine the 
+	maximum possible amount of money we can definitely win if we move first.
+	"""
 
