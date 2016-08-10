@@ -3,6 +3,7 @@
 import numpy as np
 import sys
 import math
+import operator
 
 def maximum_subseq(A):
 	"""
@@ -420,9 +421,45 @@ def longest_increasing_digital_subsequence(D):
 
 # print longest_increasing_digital_subsequence([int(i) for i in l])
 
+def box_stacking(b):
+	"""
+	You are given a set of n types of rectangular 3-D boxes, where the i^th box 
+	has length l(i), width w(i) and depth d(i) (all real numbers). You want to 
+	create a stack of boxes which is as tall as possible, but you can only stack 
+	a box on top of another box if the dimensions of the 2-D base of the lower 
+	box are each strictly larger than those of the 2-D base of the higher box. 
+	Of course, you can rotate a box so that any side functions as its base. It 
+	is also allowable to use multiple instances of the same type of box.
+	"""
+	B = {}
+	for dim in b:
+		s_dim = np.sort(dim)
+		B[(s_dim[0], s_dim[1], s_dim[2])] = s_dim[1] * s_dim[2]
+		B[(s_dim[1], s_dim[0], s_dim[2])] = s_dim[0] * s_dim[2]
+		B[(s_dim[2], s_dim[0], s_dim[1])] = s_dim[0] * s_dim[1]
 
+	sorted_b = sorted(B.items(), key=operator.itemgetter(1))
+	# initialize so that no consideration for orders
+	D = [d[0][0] for d in sorted_b]
+	for i in range(len(sorted_b)):
+		for j in range(i):
+			base_dim = sorted_b[i][0]
+			top_dim = sorted_b[j][0]
+			if base_dim[1] > top_dim[1] and base_dim[2] > top_dim[2]:
+				if D[i] + top_dim[0] > D[i]:
+					D[i] = D[j] + top_dim[0]
+	return max(D)
 
+# print box_stacking([[1,2,6], [5,3,1], [4,3,4], [8,2,7], [3,6,1], [2,5,9]])
 
-
+def building_bridge(south, north):
+	"""
+	Consider a 2-D map with a horizontal river passing through its center. 
+	There are n cities on the southern bank with x-coordinates a(1) ... a(n) 
+	and n cities on the northern bank with x-coordinates b(1) ... b(n). 
+	You want to connect as many north-south pairs of cities as possible with 
+	bridges such that no two bridges cross. When connecting cities, you can 
+	only connect city i on the northern bank to city i on the southern bank.
+	"""
 
 
