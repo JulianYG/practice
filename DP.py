@@ -480,19 +480,25 @@ def building_bridge(south, north):
 # print building_bridge([1,2,3,4,5,6,7], [7,6,5,4,3,2,1])
 # print building_bridge([1,2,3,4,5,6,7], [1,6,2,3,4,5,7])
 
-def integer_knapsack_without_duplicates():
+# def integer_knapsack_without_duplicates():
 
-	pass
+# 	pass
 
-def balanced_partition(S):
-	"""
-	You have a set of n integers each in the range 0 ... K. Partition 
-	these integers into two subsets such that you minimize |S1 - S2|, 
-	where S1 and S2 denote the sums of the elements in each of the two subsets.
-	"""
-	
+# def balanced_partition(S):
+# 	"""
+# 	You have a set of n integers each in the range 0 ... K. Partition 
+# 	these integers into two subsets such that you minimize |S1 - S2|, 
+# 	where S1 and S2 denote the sums of the elements in each of the two subsets.
+# 	"""
+# 	K = max(S)
+# 	P = np.zeros((len(S), K), dtype='int')
+# 	P[:, 0] = 1
+# 	for i in range(len(S)):
+# 		for j in range(K):
+# 			P[i, j] = 
+# print balanced_partition([1,2,4,7])
 
-def counting_boolean_parenthesizations(BS):
+def counting_boolean_parenthesizations(S):
 	"""
 	You are given a boolean expression consisting of a string of the 
 	symbols 'true', 'false', 'and', 'or', and 'xor'. Count the number of ways 
@@ -500,6 +506,80 @@ def counting_boolean_parenthesizations(BS):
 	For example, there are 2 ways to parenthesize 'true and false xor true' 
 	such that it evaluates to true.
 	"""
+	n = len(S)
+	D = np.zeros(((len(S) - 1)/2, (len(S) - 1)/2), dtype='int')
+	# Need to be careful with indices here since 'and' 'or' 'xor' do not count
+	for sublen in range(1, n + 1, 2):
+		for bgnIdx in range(0, n - sublen, 2):
+			endIdx = bgnIdx + sublen + 1
+			opBgnIdx = bgnIdx / 2
+			opEndIdx = endIdx / 2 - 1
+			# Enumerate base cases
+			if sublen == 1:
+				if S[bgnIdx + 1] == 'xor':
+					if S[bgnIdx] != S[endIdx]:
+						D[opBgnIdx, opEndIdx] = 1
+				if S[bgnIdx + 1] == 'or':
+					if S[bgnIdx] == 'true' or S[endIdx] == 'true':
+						D[opBgnIdx, opEndIdx] = 1
+				if S[bgnIdx + 1] == 'and':
+					if S[bgnIdx] == 'true' and S[endIdx] == 'true':
+						D[opBgnIdx, opEndIdx] = 1
+			else:
+				# Evaluate by splitting into left and right parts
+				for midIdx in range(opBgnIdx, opEndIdx + 1):
+					leftTotalCnt = math.factorial(midIdx - opBgnIdx)
+					rightTotalCnt = math.factorial(opEndIdx - midIdx)
+					keyOp = S[midIdx * 2 + 1]
+					# print midIdx, opBgnIdx, opEndIdx, keyOp
+
+					if midIdx == 0:
+						if keyOp == 'and':
+							if S[0] == 'true':
+								D[opBgnIdx, opEndIdx] += D[midIdx + 1, opEndIdx]
+						elif keyOp == 'or':
+							if S[0] == 'true':
+								D[opBgnIdx, opEndIdx] += rightTotalCnt
+							else:
+								D[opBgnIdx, opEndIdx] += D[midIdx + 1, opEndIdx]
+						elif keyOp == 'xor':
+							if S[0] == 'true':
+								D[opBgnIdx, opEndIdx] += rightTotalCnt - D[midIdx + 1, opEndIdx]
+							else:
+								D[opBgnIdx, opEndIdx] += D[midIdx + 1, opEndIdx]
+
+					elif midIdx == opEndIdx:
+						if keyOp == 'and':
+							if S[(midIdx + 1) * 2] == 'true':
+								D[opBgnIdx, opEndIdx] += D[opBgnIdx, midIdx - 1]
+						elif keyOp == 'or':
+							if S[(midIdx + 1) * 2] == 'true':
+								D[opBgnIdx, opEndIdx] += leftTotalCnt
+							else:
+								D[opBgnIdx, opEndIdx] += D[opBgnIdx, midIdx - 1]
+						elif keyOp == 'xor':
+							if S[(midIdx + 1) * 2] == 'true':
+								D[opBgnIdx, opEndIdx] += leftTotalCnt - D[opBgnIdx, midIdx - 1]
+							else: 
+								D[opBgnIdx, opEndIdx] += D[opBgnIdx, midIdx - 1]
+					else:
+						# First evaluate the left
+						if keyOp == 'and':
+							D[opBgnIdx, opEndIdx] += min(D[opBgnIdx, midIdx - 1], D[midIdx + 1, opEndIdx])
+						elif keyOp == 'xor':
+							D[opBgnIdx, opEndIdx] += min(D[opBgnIdx, midIdx - 1], 
+								rightTotalCnt - D[midIdx + 1, opEndIdx]) + min(D[midIdx + 1, 
+								opEndIdx], leftTotalCnt - D[opBgnIdx, midIdx - 1])
+						elif keyOp == 'or':
+							D[opBgnIdx, opEndIdx] += D[opBgnIdx, midIdx - 1] + D[midIdx + 1, opEndIdx]
+	return D[0, -1]
+
+# print counting_boolean_parenthesizations(['true','and','false','xor','true'])
+# print counting_boolean_parenthesizations(['true','and','false','xor','true','or','false','and','false'])
+# print counting_boolean_parenthesizations(['true','and','false','xor','true','or','false','and','true'])
+# print counting_boolean_parenthesizations(['true','and','false','xor','true','or','true','and','false','xor','true'])
+# print counting_boolean_parenthesizations(['true','and','false','xor','true','or','false','and','false','xor','false','or','true'])
+
 
 def optimal_strategy(v):
 	"""
@@ -510,3 +590,4 @@ def optimal_strategy(v):
 	maximum possible amount of money we can definitely win if we move first.
 	"""
 
+	pass
