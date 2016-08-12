@@ -565,18 +565,16 @@ def counting_boolean_parenthesizations(S):
 					else:
 						# First evaluate the left
 						if keyOp == 'and':
-							D[opBgnIdx, opEndIdx] += min(D[opBgnIdx, midIdx - 1], D[midIdx + 1, opEndIdx])
+							D[opBgnIdx, opEndIdx] += D[opBgnIdx, midIdx - 1] * D[midIdx + 1, opEndIdx]
 						elif keyOp == 'xor':
-							D[opBgnIdx, opEndIdx] += min(D[opBgnIdx, midIdx - 1], 
-								rightTotalCnt - D[midIdx + 1, opEndIdx]) + min(D[midIdx + 1, 
-								opEndIdx], leftTotalCnt - D[opBgnIdx, midIdx - 1])
+							D[opBgnIdx, opEndIdx] += D[opBgnIdx, midIdx - 1] * (rightTotalCnt - D[midIdx + 1, opEndIdx]) + D[midIdx + 1, opEndIdx] * (leftTotalCnt - D[opBgnIdx, midIdx - 1])
 						elif keyOp == 'or':
-							D[opBgnIdx, opEndIdx] += D[opBgnIdx, midIdx - 1] + D[midIdx + 1, opEndIdx]
+							D[opBgnIdx, opEndIdx] += leftTotalCnt * rightTotalCnt - (leftTotalCnt - D[opBgnIdx, midIdx - 1]) * (rightTotalCnt - D[midIdx + 1, opEndIdx])
 	return D[0, -1]
 
 # print counting_boolean_parenthesizations(['true','and','false','xor','true'])
+# print counting_boolean_parenthesizations(['true','and','false','xor','true','or','false'])
 # print counting_boolean_parenthesizations(['true','and','false','xor','true','or','false','and','false'])
-# print counting_boolean_parenthesizations(['true','and','false','xor','true','or','false','and','true'])
 # print counting_boolean_parenthesizations(['true','and','false','xor','true','or','true','and','false','xor','true'])
 # print counting_boolean_parenthesizations(['true','and','false','xor','true','or','false','and','false','xor','false','or','true'])
 
@@ -590,4 +588,3 @@ def optimal_strategy(v):
 	maximum possible amount of money we can definitely win if we move first.
 	"""
 
-	pass
