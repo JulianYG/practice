@@ -461,6 +461,9 @@ def building_bridge(south, north):
 	bridges such that no two bridges cross. When connecting cities, you can 
 	only connect city i on the northern bank to city i on the southern bank.
 	"""
+	# This problem is actually equivalent to the longest increasing subsequence
+	# problem if one side of the cities strictly follow increasing order. 
+	# For generality, this is a better approach
 
 	D = np.zeros((len(south) + 1, len(north) + 1), dtype='int')
 	for i in range(1, len(south) + 1):
@@ -476,6 +479,7 @@ def building_bridge(south, north):
 
 # print building_bridge([1,2,3], [2,1,3])
 # print building_bridge([1,2], [1,2])
+# print building_bridge([1,2,3,4,5,6], [5,1,2,6,4,3])
 # print building_bridge([1,3,6,2,4,5], [5,1,2,6,4,3])
 # print building_bridge([1,2,3,4,5,6,7], [7,6,5,4,3,2,1])
 # print building_bridge([1,2,3,4,5,6,7], [1,6,2,3,4,5,7])
@@ -587,4 +591,27 @@ def optimal_strategy(v):
 	from the row permanently, and receives the value of the coin. Determine the 
 	maximum possible amount of money we can definitely win if we move first.
 	"""
+	n = len(v)
+	D = np.zeros((n, n), dtype='int')
+	# Setup base cases
+	for i in range(n):
+		D[i, i] = v[i]
+		if i + 1 < n:
+			D[i, i + 1] = max(v[i], v[i + 1])
+	# Move from head to tail, by different lengths
+	for sublen in range(n):
+		for j in range(sublen, n):
+			i = j - sublen
+			if i + 1 <= j - 1 and i + 2 <= j and i <= j - 2:
+				D[i, j] = max(min(D[i + 1, j - 1], D[i + 2, j]) + v[i], 
+					min(D[i, j - 2], D[i + 1, j - 1]) + v[j])
+	return D[0, -1]
+
+# print optimal_strategy([5,4])
+# print optimal_strategy([5,8,4,3])
+# print optimal_strategy([3,2,6,7])
+# print optimal_strategy([2,3,5,4,1,7])
+# print optimal_strategy([1,6,7,2,8,9,20,14,17,13,11,-2,5,8,-3,-7])
+
+
 
