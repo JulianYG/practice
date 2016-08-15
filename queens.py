@@ -12,12 +12,13 @@ def queens(Q, r, s):
 	"""
 	Q is the array of length n that represents the chess board:
 	each element of index i represent the position of the queen on
-	ith row. Initialized with -1.
+	ith row. 
+	r is an integer representing the fulfilled rows, initialized with 0.
 	"""
 	n = len(Q)
-
-	if n == r:
-		s.append(Q)
+	P = []
+	for q in Q:
+		P.append(q)
 
 	for i in range(n):	# columns
 		legal = True
@@ -28,14 +29,14 @@ def queens(Q, r, s):
 				if i == Q[j] + 1 or i == Q[j] - 1:
 					legal = False
 		if legal:
-			Q[r] = i
-			queens(Q, r + 1, s)
-			print Q, r + 1
-	return Q
+			P[r] = i
+			queens(P, r + 1, s)
+			if r == n - 1:	# only when the board is completely filled
+				s.append(P)
 
 x = []
-print queens([-1]*4, 0, x)
-print x
+# queens([-1]*5, 0, x)
+# print x
 
 def subset_sum(S, x):
 
