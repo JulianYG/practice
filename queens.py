@@ -8,32 +8,34 @@ readers not familiar with the rules of chess, this means that no
 two queens are in the same row, column, or diagonal.
 """
 
-def queens(Q, r):
+def queens(Q, r, s):
 	"""
 	Q is the array of length n that represents the chess board:
 	each element of index i represent the position of the queen on
-	ith row. r is an integer representing the fulfilled rows. 
-	Initialized with 0.
+	ith row. Initialized with -1.
 	"""
 	n = len(Q)
-	if n < 4:
-		raise AssertionError("Invalid input Q!")
-	if r == n:
-		return Q
 
-	for i in range(n):
-		flag = True
-		for j in range(r):
-			if Q[j] == i or Q[j] == r - Q[i] + j or Q[j] == r - Q[i] - j:
-				flag = False
-		if flag:
+	if n == r:
+		s.append(Q)
+
+	for i in range(n):	# columns
+		legal = True
+		for j in range(r):	# filled rows
+			if i == Q[j]:
+				legal = False
+			if j == r - 1:	# when two rows are neighboring, meaning diagonal
+				if i == Q[j] + 1 or i == Q[j] - 1:
+					legal = False
+		if legal:
 			Q[r] = i
-			print Q
-			queens(Q, r + 1)
-
+			queens(Q, r + 1, s)
+			print Q, r + 1
 	return Q
 
-#print queens([-1]*4, 0)
+x = []
+print queens([-1]*4, 0, x)
+print x
 
 def subset_sum(S, x):
 
@@ -81,7 +83,7 @@ def longest_accelerating_subsequence(prev, back, S):
 				curr = l
 		return curr
 
-print longest_accelerating_subsequence(10000, 10000, [2, 4, 8, 19, 37])
+# print longest_accelerating_subsequence(10000, 10000, [2, 4, 8, 19, 37])
 
 
 def recursive_longest_common_subsequence(s1, s2, cs):
@@ -170,5 +172,14 @@ def minimum_palindromic_insertions(s):
 			return minLenRight, palStrRight
 
 # print minimum_palindromic_insertions('bboocb')
+
+
+
+
+
+
+
+
+
 
 

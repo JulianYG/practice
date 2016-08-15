@@ -4,6 +4,7 @@ import numpy as np
 import sys
 import math
 import operator
+import utils
 
 def maximum_subseq(A):
 	"""
@@ -52,19 +53,8 @@ def longest_increasing_seq(A):
 		if D[i] > maxLen:
 			maxLen = D[i]
 			maxIdx = i
-	l = get_idx(maxIdx, T, [])
+	l = utils.get_idx(maxIdx, T, [])
 	return maxLen, [A[i] for i in l]
-
-def get_idx(i, T, l):
-	"""
-	Helper function for LIS backtrace.
-	"""
-	if T[i] == -1:
-		l = [i] + l
-		return l
-	else:
-		l = [i] + l
-		return get_idx(T[i], T, l)
 
 # print longest_increasing_seq([-2, -5, 6, -2, 3, -10, 5, -6])
 # print longest_increasing_seq([-3, 1, 2, 4, -6, 5, 7, 2])
@@ -221,7 +211,7 @@ def minimal_palindrome(p):
 	for sublen in range(1, n + 1):
 		for bgnIdx in range(n - sublen + 1):
 			endIdx = bgnIdx + sublen - 1
-			if isPalindrome(p[bgnIdx:endIdx+1]):
+			if utils.isPalindrome(p[bgnIdx:endIdx+1]):
 				w[bgnIdx][endIdx] = 1
 			else:
 				w[bgnIdx][endIdx] = sublen
@@ -230,34 +220,7 @@ def minimal_palindrome(p):
 						div.append(((bgnIdx, midIdx), (midIdx+1, endIdx)))
 						w[bgnIdx][endIdx] = w[bgnIdx][midIdx] + w[midIdx+1][endIdx]
 	div.reverse()
-	return w[0][-1], track_palindrome((0, len(p)-1), div, w, p)
-
-
-def track_palindrome(i, I, W, P):
-	"""
-	A helper recursive function to back trace the partitioned 
-	palindromes that onstruct the given string.
-	"""
-	if W[i] == 1:
-		return [P[i[0]:i[1]+1]]
-	else:
-		for it in I:
-			leftIdx, rightIdx = it[0], it[1]
-			if leftIdx[0] == i[0] and rightIdx[1] == i[1]:
-				l = track_palindrome(leftIdx, I, W, P)
-				r = track_palindrome(rightIdx, I, W, P)
-				return l + r
-
-def isPalindrome(s):
-	"""
-	A simple function to check whether given string is a palindrome.
-	"""
-	if len(s) < 2:
-		return True
-	else:
-		if s[0] == s[-1]:
-			return isPalindrome(s[1:-1])
-		return False
+	return w[0][-1], utils.track_palindrome((0, len(p)-1), div, w, p)
 
 # print minimal_palindrome('bubbaseesabanana')	#3
 # print minimal_palindrome('baseesab') #1
@@ -321,13 +284,6 @@ def matrix_chain_order(p):
 
 #print matrix_chain_order([40, 20, 30, 10, 30])
 
-def digit2int(d):
-	"""
-	A helper function to combine numbers in a list to decimal int value
-	"""
-	s = [str(c) for c in d]
-	# To avoid overflow
-	return 0 if not s else int(''.join(s))
 
 def longest_increasing_digital_subsequence(D):
 	"""
@@ -360,7 +316,7 @@ def longest_increasing_digital_subsequence(D):
 		for end_idx in range(sublen, n):
 
 			start_idx = end_idx + 1 - sublen
-			curr_val = digit2int(A[start_idx:end_idx + 1])
+			curr_val = utils.digit2int(A[start_idx:end_idx + 1])
 
 			prev_max = max(w[:sublen, start_idx - 1])
 			prev_max_idx = (np.argmax(w[:sublen, start_idx - 1]), start_idx - 1)
@@ -372,7 +328,7 @@ def longest_increasing_digital_subsequence(D):
 					t[sublen][end_idx] = (np.argmax(w[:sublen, jmp_idx]), jmp_idx)
 					continue;
 
-				whole_val = digit2int(A[jmp_idx - sublen + 1: jmp_idx + 1])
+				whole_val = utils.digit2int(A[jmp_idx - sublen + 1: jmp_idx + 1])
 			
 				if curr_val > whole_val:
 
@@ -395,7 +351,7 @@ def longest_increasing_digital_subsequence(D):
 		while max_res_idx != (-1, -1):
 			sublen, col = max_res_idx[0], max_res_idx[1]
 			max_res_idx = t[max_res_idx[0]][max_res_idx[1]]
-			num.append(digit2int(A[col - sublen + 1: col + 1]))
+			num.append(utils.digit2int(A[col - sublen + 1: col + 1]))
 		num.reverse()
 		subseq_lst.append(num[1:])
 
