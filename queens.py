@@ -25,17 +25,17 @@ def queens(Q, r, s):
 		for j in range(r):	# filled rows
 			if i == Q[j]:
 				legal = False
-			if j == r - 1:	# when two rows are neighboring, meaning diagonal
-				if i == Q[j] + 1 or i == Q[j] - 1:
-					legal = False
+			# Get rid of diagonal cases
+			if i == Q[j] - r + j or i == Q[j] + r - j:
+				legal = False
 		if legal:
 			P[r] = i
 			queens(P, r + 1, s)
 			if r == n - 1:	# only when the board is completely filled
 				s.append(P)
 
-x = []
-# queens([-1]*5, 0, x)
+# x = []
+# queens([-1]*10, 0, x)
 # print x
 
 def subset_sum(S, x):
