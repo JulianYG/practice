@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import random
+
 """
 The prototypical backtracking problem is the classical n Queens Problem, 
 first proposed by German chess enthusiast Max Bezzel in 1848 for the 
@@ -37,6 +39,50 @@ def queens(Q, r, s):
 # x = []
 # queens([-1]*10, 0, x)
 # print x
+
+def fast_queen_search(n):
+	"""
+	A faster gradient heuristic search for N-queens problem;
+	Only returns one solution.
+	"""
+	c, t = 1, 1
+	while c > 0 or t > 0: 
+		Q = range(n)
+		random.shuffle(Q)
+		c, t = 0, 0
+		for i in range(n):
+			for j in range(i + 1, n):
+				if Q[i] + i == Q[j] + j or Q[i] - i == Q[j] - j: # on diagonal
+					t += 1
+		if t > 0:
+			for i in range(n):
+				for j in range(i + 1, n):
+					swap(Q, i, j, t, c)
+			print Q, 'q'
+	return Q
+
+def swap(Q, i, j, x, c):
+	"""
+	Check if swap Qi and Qj reduces total number of collision; if 
+	it does then swap Qi and Qj.
+	"""
+	P = []
+	for q in Q:
+		P.append(q)
+	P[i] = j
+	P[j] = i
+	t = 0
+	for i in range(len(P)):
+		for j in range(i + 1, len(P)):
+			if P[i] + i == P[j] + j or P[i] - i == P[j] - j:
+				t += 1
+	if t < x:
+		print 'y'
+		Q[i] = j
+		Q[j] = i
+		c += 1
+
+print fast_queen_search(4)
 
 def subset_sum(S, x):
 
