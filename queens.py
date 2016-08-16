@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
+import time
+from matplotlib import pyplot as plt
 
 """
 The prototypical backtracking problem is the classical n Queens Problem, 
@@ -45,9 +47,9 @@ def fast_queen_search(n):
 	A faster gradient heuristic search for N-queens problem;
 	Only returns one solution.
 	"""
-	c, t = 1, 1
-	while c > 0 or t > 0: 
-		Q = range(n)
+	t, c = 1, 1
+	Q = range(n)
+	while c > 0: 
 		random.shuffle(Q)
 		c, t = 0, 0
 		for i in range(n):
@@ -57,32 +59,85 @@ def fast_queen_search(n):
 		if t > 0:
 			for i in range(n):
 				for j in range(i + 1, n):
-					swap(Q, i, j, t, c)
-			print Q, 'q'
+					P = []
+					for q in Q:
+						P.append(q)
+					if need_swap(Q, i, j, t):
+						s = Q[i]
+						Q[i] = Q[j]
+						Q[j] = s
+						c += 1
 	return Q
 
-def swap(Q, i, j, x, c):
+def need_swap(P, i, j, x):
 	"""
 	Check if swap Qi and Qj reduces total number of collision; if 
 	it does then swap Qi and Qj.
 	"""
-	P = []
-	for q in Q:
-		P.append(q)
-	P[i] = j
-	P[j] = i
 	t = 0
+	c = P[i]
+	P[i] = P[j]
+	P[j] = c
 	for i in range(len(P)):
 		for j in range(i + 1, len(P)):
 			if P[i] + i == P[j] + j or P[i] - i == P[j] - j:
 				t += 1
 	if t < x:
-		print 'y'
-		Q[i] = j
-		Q[j] = i
-		c += 1
+		return True
+	else:
+		return False
 
-print fast_queen_search(4)
+# time1 = time.time()
+# print fast_queen_search(17)
+# time2 = time.time()
+
+def comparison_perm_queen_search(n):
+	t = 1
+	Q = range(n)
+	while t > 0:
+		random.shuffle(Q)
+		t = 0
+		for i in range(n):
+			for j in range(i + 1, n):
+				if Q[i] + i == Q[j] + j or Q[i] - i == Q[j] - j: # on diagonal
+					t += 1
+	return Q
+
+# time3 = time.time()
+# print comparison_perm_queen_search(17)
+# time4 = time.time()
+# print time2 - time1, time4 - time3
+
+
+def test_queens(n):
+	timing = dict()
+	original = []
+	fast = []
+	perm = []
+	for i in range(4, n + 1):
+		time1 = time.time()
+		queens([-1]*i, 0, [])
+		time2 = time.time()
+		fast_queen_search(i)
+		time3 = time.time()
+		comparison_perm_queen_search(i)
+		time4 = time.time()
+		original.append(time2 - time1)
+		fast.append(time3 - time2)
+		perm.append(time4 - time3)
+		# timing[i] = {'original': time2 - time1, 
+		# 	'fast': time3 - time2, 'perm': time4 - time3}
+	fig = plt.figure()
+	# ax = fig.add_subplot(111)
+	plt.plot(range(4, n + 1), original, label='original')
+	plt.plot(range(4, n + 1), fast, label='fast')
+	plt.plot(range(4, n + 1), perm, label='perm')
+	plt.xlim(4, n + 1)
+	plt.legend(loc='upper left', frameon=False)
+	plt.yscale('log')
+	plt.show()
+
+# test_queens(15)
 
 def subset_sum(S, x):
 
