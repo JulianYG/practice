@@ -406,7 +406,7 @@ def box_stacking(b):
 					D[i] = D[j] + top_dim[0]
 	return max(D)
 
-# print box_stacking([[1,2,6], [5,3,1], [4,3,4], [8,2,7], [3,6,1], [2,5,9]])
+print box_stacking([[1,2,6], [5,3,1], [4,3,4], [8,2,7], [3,6,1], [2,5,9]])
 
 def building_bridge(south, north):
 	"""

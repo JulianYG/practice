@@ -88,8 +88,9 @@ def need_swap(P, i, j, x):
 		return False
 
 # time1 = time.time()
-# print fast_queen_search(17)
+# print fast_queen_search(30)
 # time2 = time.time()
+# print time2 - time1
 
 def comparison_perm_queen_search(n):
 	t = 1
@@ -137,7 +138,7 @@ def test_queens(n):
 	plt.yscale('log')
 	plt.show()
 
-# test_queens(15)
+# test_queens(13)
 
 def subset_sum(S, x):
 
@@ -275,8 +276,9 @@ def minimum_palindromic_insertions(s):
 
 # print minimum_palindromic_insertions('bboocb')
 
+# def lowest_common_ancestor():
 
-
+# 	pass
 
 
 
