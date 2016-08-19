@@ -32,8 +32,8 @@ def maximum_subseq(A):
 
 #print maximum_subseq([-2, -5, 6, -2, 3, -10, 5, -6])
 #print maximum_subseq([-2, 1, -3, 4, -1, 2, 1, -5, 4])
-#print maximum_subseq([13, -3, -25, 20, -3, -16, -23, 18, 20, 
-#	-7, 12, -5, -22, 15, -4, 7])
+print maximum_subseq([13, -3, -25, 20, -3, -16, -23, 18, 20, 
+	-7, 12, -5, -22, 15, -4, 7])
 
 def longest_increasing_seq(A):
 	"""
@@ -406,7 +406,7 @@ def box_stacking(b):
 					D[i] = D[j] + top_dim[0]
 	return max(D)
 
-print box_stacking([[1,2,6], [5,3,1], [4,3,4], [8,2,7], [3,6,1], [2,5,9]])
+# print box_stacking([[1,2,6], [5,3,1], [4,3,4], [8,2,7], [3,6,1], [2,5,9]])
 
 def building_bridge(south, north):
 	"""
