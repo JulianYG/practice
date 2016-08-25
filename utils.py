@@ -50,5 +50,13 @@ def digit2int(d):
 	# To avoid overflow
 	return 0 if not s else int(''.join(s))
 
+def get_median(S):
+	"""
+	A helper function to get the median of an array.
+	"""
+	if len(S) % 2 == 0:
+		return (S[len(S) / 2 - 1] + S[len(S) / 2]) / 2.0, True
+	else:
+		return S[len(S) / 2], False
 
 

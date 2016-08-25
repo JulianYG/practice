@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 import time
+import utils
 from matplotlib import pyplot as plt
 
 """
@@ -280,9 +281,72 @@ def minimum_palindromic_insertions(s):
 
 # 	pass
 
+def merge_two_sorted_arrays(A, B):
+
+	# Too many corner cases...
+	# if len(A) == 1 and len(B) == 1:
+	# 	return (A[0] + B[0]) / 2.0
+
+	# if len(A) == 1 and len(B) == 2:
+	# 	if A[0] <= B[0]:
+	# 		return B[0]
+	# 	elif A[0] >= B[1]:
+	# 		return B[1]
+	# 	else:
+	# 		return A[0]
+
+	# if len(A) == 2 and len(B) == 1:
+	# 	if B[0] <= A[0]:
+	# 		return A[0]
+	# 	elif B[0] >= A[1]:
+	# 		return A[1]
+	# 	else:
+	# 		return B[0]
+
+	if len(A) == 2:
+		if len(B) == 2:
+			return (max(A[0], B[0]) + min(A[1], B[1])) / 2.0
+		else:
+			arr = sorted(A + B)
+			if len(A) + len(B) % 2 == 0:
+				return (arr[len(arr) / 2 - 1] + arr[len(arr)] ) / 2.0
+			else:
+				return arr[len(arr) / 2]
+	if len(B) == 2:
+		if len(A) == 2:
+			return (max(A[0], B[0]) + min(A[1], B[1])) / 2.0
+		else:
+			arr = sorted(A + B)
+			if len(A) + len(B) % 2 == 0:
+				return (arr[len(arr) / 2 - 1] + arr[len(arr)] ) / 2.0
+			else:
+				return arr[len(arr) / 2]
+	# Too many corner cases again...
+
+	one, even_one = utils.get_median(A)
+	two, even_two = utils.get_median(B)
+
+	if one <= two:	
+
+		if even_one: 
+			return merge_two_sorted_arrays(A[len(A) / 2 - 1:], 
+				B[:len(B) / 2 + 1])
+		else:
+			return merge_two_sorted_arrays(A[len(A) / 2:],
+				B[:len(B) / 2 + 1])
+	else:
+		if even_two:
+			return merge_two_sorted_arrays(A[:len(A) / 2 + 1], 
+				B[len(B) / 2 - 1:])
+		else:
+			return merge_two_sorted_arrays(A[:len(A) / 2 + 1], 
+				B[len(B) / 2:])
 
 
-
+print merge_two_sorted_arrays([2,4,6,7,9,17], [1,3,5,8,11])
+# print merge_two_sorted_arrays([4,6,7], [3,5,8])
+# print merge_two_sorted_arrays([1,12,15,26,38], [2,13,17,30,45])
+# print merge_two_sorted_arrays([2,4,6,7],[5,8,11])
 
 
 
